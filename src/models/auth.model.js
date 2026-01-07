@@ -38,16 +38,15 @@ class UserModel {
     try {
       const [rows] = await pool.query(
         `
-        SELECT id, email
+        SELECT id
         FROM users
         WHERE id = ?
         LIMIT 1
         `,
-        [Number(id)]
+        [id]
       );
-
       return rows[0] || null;
-    } catch {
+    } catch (error) {
       return null;
     }
   }

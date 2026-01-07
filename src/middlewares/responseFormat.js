@@ -10,9 +10,9 @@ const responseFormat = (req, res, next) => {
     return res.success(rows, { pagination });
   };
   res.error = (status, message, error) => {
-    return res.status(status).json({
+    return res.status(error?.status ?? status).json({
       status: "error",
-      error,
+      ...(error?.status ? {} : error),
       message,
     });
   };

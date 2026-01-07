@@ -1,15 +1,16 @@
 const express = require("express");
-const conversationController = require("../controller/conversation.controller");
+const conversationsController = require("../controller/conversations.controller");
+const authRequire = require("../middlewares/authRequire");
 
 const conversationRouter = express.Router();
-
-conversationRouter.post("/", conversationController.createConversation);
-conversationRouter.get("/", conversationController.getConversations);
+conversationRouter.use(authRequire);
+conversationRouter.post("/", conversationsController.createConversation);
+conversationRouter.get("/", conversationsController.getConversations);
 conversationRouter.post(
   "/:id/participants",
-  conversationController.addParticipant
+  conversationsController.addParticipant
 );
-conversationRouter.post("/:id/messages", conversationController.sendMessage);
-conversationRouter.get("/:id/messages", conversationController.getMessages);
+conversationRouter.post("/:id/messages", conversationsController.sendMessage);
+conversationRouter.get("/:id/messages", conversationsController.getMessages);
 
 module.exports = conversationRouter;
