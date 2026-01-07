@@ -1,7 +1,7 @@
 const express = require("express");
-const authRouter = require("./auth.router");
-const conversationRouter = require("./conversations.router");
-const userRouter = require("./users.router");
+const authRouter = require("./auth.route");
+const conversationRouter = require("./conversations.route");
+const userRouter = require("./users.route");
 
 const router = express.Router();
 
