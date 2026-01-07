@@ -48,7 +48,7 @@ class AuthService {
     const user = await authModel.findById(userId);
 
     const token = await jwtService.sign({ sub: user.id }, { expiresIn: "7d" });
-
+    
     return {
       user: { id: user.id, email: user.email },
       token,

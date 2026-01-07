@@ -11,7 +11,7 @@ class ConversationController {
       current_user_id: currentUserId,
     });
 
-    return res.success(data, 201);
+    return res.success(data, {}, 201);
   }
 
   async getConversations(req, res) {
@@ -31,7 +31,7 @@ class ConversationController {
       user_id,
     });
 
-    return res.success(data);
+    return res.success(undefined, { message: "Thêm thành công" }, 201);
   }
 
   async sendMessage(req, res) {
@@ -45,7 +45,7 @@ class ConversationController {
       current_user_id,
     });
 
-    return res.success(data, 201);
+    return res.success(data, {}, 201);
   }
 
   async getMessages(req, res) {
@@ -57,7 +57,7 @@ class ConversationController {
       current_user_id,
     });
 
-    return res.success(data, 200);
+    return res.success(data, {}, 200);
   }
 }
 

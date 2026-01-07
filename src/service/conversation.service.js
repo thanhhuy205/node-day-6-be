@@ -5,20 +5,31 @@ const conversationModel = require("../models/conversation.model");
 class ConversationService {
   async createConversation({ name, type, participant_ids, current_user_id }) {
     if (!type || !["group", "direct"].includes(type)) {
-      throw new ApiError(400, "type không hợp lệ");
+      throw new ApiError(400, "type group hoặc direct");
+    }
+    if (!Array.isArray(participant_ids) || participant_ids.length <= 0) {
+      throw new ApiError(
+        400,
+        "Người tham gia phải là mảng và tối thiểu 1 người"
+      );
+    }
+    if (participant_ids.includes(String(current_user_id))) {
+      throw new ApiError(400, "Không thể tự mời bản thân");
+    }
+    console.log(participant_ids.length);
+    if (type === "direct" && participant_ids.length !== 1) {
+      throw new ApiError(400, "direct chat chỉ giới hạn 1 người");
     }
 
-    if (type === "group" && !name) {
-      throw new ApiError(400, "group chat cần name");
-    }
-
-    if (!Array.isArray(participant_ids)) {
-      throw new ApiError(400, "participant_ids phải là mảng");
+    if (type === "group" && !name && participant_ids.length - 1 > 1) {
+      throw new ApiError(
+        400,
+        "group chat cần name và ít nhất 2 người được mời tham gia"
+      );
     }
     const uniqueParticipants = Array.from(
       new Set([current_user_id, ...participant_ids])
     );
-    console.log(uniqueParticipants);
     const conversation_id = await conversationModel.createConversation({
       name,
       type,
@@ -62,7 +73,7 @@ class ConversationService {
       conversation_id: payload.conversation_id,
       user_id: payload.user_id,
     });
-    if (isPt) throw new ApiError(404, "Đã tham gia vào hội thoại");
+    if (isPt) throw new ApiError(404, "Đã tham gia từ trước vào hội thoại");
 
     const result = await conversationModel.addParticipant({
       conversation_id: payload.conversation_id,
@@ -83,7 +94,11 @@ class ConversationService {
       sender_id: current_user_id,
       content,
     });
-
+    const isPt = await conversationModel.isParticipant({
+      conversation_id,
+      user_id: current_user_id,
+    });
+    if (!isPt) throw new ApiError(404, "Bạn chưa tham gia hội thoại");
     if (!message_id) throw new ApiError(500, "Gửi tin nhắn thất bại");
 
     return { message_id };
@@ -103,8 +118,18 @@ class ConversationService {
       await conversationModel.getMessagesWithSenderByConversationId(
         conversation_id
       );
-
-    return messages;
+    const result = {
+      conversation_id,
+      chat: [],
+    };
+    messages.filter((mess) =>
+      result.chat.unshift({
+        sender_id: mess.sender_id,
+        content: mess.content,
+        created_at: mess.created_at,
+      })
+    );
+    return result;
   }
 }
 

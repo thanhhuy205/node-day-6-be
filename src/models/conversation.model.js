@@ -1,4 +1,5 @@
 const pool = require("../config/database");
+const ApiError = require("../errors/apiError");
 
 class ConversationModel {
   async createConversation({ name, type, created_by }) {
@@ -12,8 +13,8 @@ class ConversationModel {
       );
 
       return result.insertId || null;
-    } catch {
-      return null;
+    } catch (error) {
+      throw new ApiError(500, String(error));
     }
   }
 
@@ -29,8 +30,8 @@ class ConversationModel {
       );
 
       return rows[0] || null;
-    } catch {
-      return null;
+    } catch (error) {
+      throw new ApiError(500, String(error));
     }
   }
 
@@ -70,9 +71,10 @@ class ConversationModel {
         `,
         [conversation_id, user_id]
       );
-      return result.insertId || null;
+
+      return result.affectedRows || null;
     } catch (error) {
-      return null;
+      throw new ApiError(500, String(error));
     }
   }
 
@@ -80,17 +82,17 @@ class ConversationModel {
     try {
       const [rows] = await pool.query(
         `
-        SELECT 1
-        FROM conversation_participants
-        WHERE conversation_id = ? AND user_id = ?
-        LIMIT 1
+          SELECT EXISTS(
+            SELECT 1
+            FROM conversation_participants
+            WHERE conversation_id = ? AND user_id = ?
+          ) AS exists_flag;
         `,
         [conversation_id, user_id]
       );
-
-      return rows.length > 0;
-    } catch {
-      return false;
+      return rows[0].exists_flag;
+    } catch (error) {
+      throw new ApiError(500, String(error));
     }
   }
 
@@ -123,8 +125,8 @@ class ConversationModel {
       );
 
       return result.insertId || null;
-    } catch {
-      return null;
+    } catch (error) {
+      throw new ApiError(500, String(error));
     }
   }
 

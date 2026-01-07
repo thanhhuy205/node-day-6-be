@@ -38,7 +38,7 @@ class UserModel {
     try {
       const [rows] = await pool.query(
         `
-        SELECT id
+        SELECT id,email
         FROM users
         WHERE id = ?
         LIMIT 1
