@@ -1,7 +1,7 @@
 const express = require("express");
 const responseFormat = require("./src/middlewares/responseFormat");
 const notFoundHandler = require("./src/middlewares/notFoundHandler");
-const router = require("./src/router");
+const router = require("./src/routers");
 const apiRateLimiter = require("./src/middlewares/rateLimiter");
 const exceptionHandler = require("./src/middlewares/exceptionHandler");
 
