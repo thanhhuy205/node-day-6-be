@@ -1,5 +1,10 @@
-class UserService {
-  async searchUsersByEmail({ q, current_user_id }) {}
-}
+const userModel = require("../models/user.model");
 
-module.exports = UserService;
+class UserService {
+  async searchUsersByEmail(email) {
+    const result = await userModel.findByEmail(email);
+    return result;
+  }
+}
+const userService = new UserService();
+module.exports = userService;

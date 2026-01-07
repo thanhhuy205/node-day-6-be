@@ -1,6 +1,6 @@
 const pool = require("../config/database");
 
-class UserModel {
+class AuthModel {
   async findByEmailWithPassword(email) {
     try {
       const [rows] = await pool.query(
@@ -13,8 +13,8 @@ class UserModel {
         [email]
       );
       return rows[0] || null;
-    } catch {
-      return null;
+    } catch (error) {
+      throw new ApiError(500, String(error));
     }
   }
 
@@ -29,8 +29,8 @@ class UserModel {
       );
 
       return result.insertId;
-    } catch {
-      return null;
+    } catch (error) {
+      throw new ApiError(500, String(error));
     }
   }
 
@@ -47,9 +47,9 @@ class UserModel {
       );
       return rows[0] || null;
     } catch (error) {
-      return null;
+      throw new ApiError(500, String(error));
     }
   }
 }
-const authModel = new UserModel();
+const authModel = new AuthModel();
 module.exports = authModel;
