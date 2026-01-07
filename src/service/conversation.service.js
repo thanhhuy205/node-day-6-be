@@ -21,11 +21,13 @@ class ConversationService {
       throw new ApiError(400, "direct chat chỉ giới hạn 1 người");
     }
 
-    if (type === "group" && !name && participant_ids.length - 1 > 1) {
-      throw new ApiError(
-        400,
-        "group chat cần name và ít nhất 2 người được mời tham gia"
-      );
+    if (type === "group") {
+      if (!name) {
+        throw new ApiError(400, "group chat cần có tên");
+      }
+      if (participant_ids.length < 1) {
+        throw new ApiError(400, "group chat cần ít nhất 1 người được mời");
+      }
     }
     const uniqueParticipants = Array.from(
       new Set([current_user_id, ...participant_ids])
@@ -89,16 +91,18 @@ class ConversationService {
     const cov = await conversationModel.findConversationById(conversation_id);
     if (!cov) throw new ApiError(404, "Hội thoại không tồn tại");
 
+    const isPt = await conversationModel.isParticipant({
+      conversation_id,
+      user_id: current_user_id,
+    });
+    if (!isPt) throw new ApiError(403, "Bạn chưa tham gia hội thoại");
+
     const message_id = await conversationModel.createMessage({
       conversation_id,
       sender_id: current_user_id,
       content,
     });
-    const isPt = await conversationModel.isParticipant({
-      conversation_id,
-      user_id: current_user_id,
-    });
-    if (!isPt) throw new ApiError(404, "Bạn chưa tham gia hội thoại");
+
     if (!message_id) throw new ApiError(500, "Gửi tin nhắn thất bại");
 
     return { message_id };

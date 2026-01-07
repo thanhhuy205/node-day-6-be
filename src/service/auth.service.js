@@ -4,9 +4,22 @@ const jwtService = require("./jwt.service");
 const bcrypt = require("bcrypt");
 
 class AuthService {
+  validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  validatePassword(password) {
+    return password && password.length >= 6;
+  }
+
   async login({ email, password }) {
     if (!email || !password) {
       throw new ApiError(400, "Sai tài khoản hoặc mật khẩu");
+    }
+
+    if (!this.validateEmail(email)) {
+      throw new ApiError(400, "Email không hợp lệ");
     }
 
     const user = await authModel.findByEmailWithPassword(email);
@@ -31,7 +44,15 @@ class AuthService {
 
   async register({ email, password }) {
     if (!email || !password) {
-      throw new ApiError(400, "Sai tài khoản hoặc mật khẩu");
+      throw new ApiError(400, "Email và mật khẩu là bắt buộc");
+    }
+
+    if (!this.validateEmail(email)) {
+      throw new ApiError(400, "Email không hợp lệ");
+    }
+
+    if (!this.validatePassword(password)) {
+      throw new ApiError(400, "Mật khẩu phải có ít nhất 6 ký tự");
     }
 
     const existed = await authModel.findByEmailWithPassword(email);
@@ -48,7 +69,7 @@ class AuthService {
     const user = await authModel.findById(userId);
 
     const token = await jwtService.sign({ sub: user.id }, { expiresIn: "7d" });
-    
+
     return {
       user: { id: user.id, email: user.email },
       token,

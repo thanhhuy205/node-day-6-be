@@ -1,4 +1,5 @@
 const pool = require("../config/database");
+const ApiError = require("../errors/apiError");
 
 class AuthModel {
   async findByEmailWithPassword(email) {
