@@ -18,3 +18,16 @@ create table revoked_tokens (
     (user_id) REFERENCES users(id) 
     ON DELETE CASCADE
 )
+
+create table posts (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(200) NOT NULL, 
+    content TEXT NOT NULL, 
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp on update current_timestamp,
+    user_id BIGINT UNSIGNED,
+    
+    CONSTRAINT fk_user_note FOREIGN KEY
+    (user_id) REFERENCES users(id) 
+    ON DELETE CASCADE
+) ;
