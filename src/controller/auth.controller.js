@@ -4,14 +4,11 @@ class AuthController {
   async registerController(req, res) {
     const { email, password } = req.body;
     const result = await authService.register({ email, password });
-    console.log(result);
-
     return res.success(
       { user: result.user },
       {
-        accessToken: result.token,
-        expiresIn: 7 * 24 * 60 * 60,
-      }
+        ...result.token,
+      },
     );
   }
 
@@ -22,11 +19,11 @@ class AuthController {
     return res.success(
       { user: result.user },
       {
-        accessToken: result.token,
-        expiresIn: 7 * 24 * 60 * 60,
-      }
+        ...result.token,
+      },
     );
   }
+  async logoutController(req, res) {}
 }
 const authController = new AuthController();
 module.exports = authController;

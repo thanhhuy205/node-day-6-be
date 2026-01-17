@@ -1,11 +1,12 @@
 const jwt = require("jsonwebtoken");
 const { config } = require("dotenv");
-
+const { jwtEnv } = require("../config/jwt");
+const crypto = require("crypto");
 config();
 
 class JwtService {
   constructor() {
-    this.secret = process.env.ACCESS_TOKEN_KEY;
+    this.secret = jwtEnv.ACCESS_TOKEN_KEY;
   }
 
   sign(payload, options) {
@@ -24,6 +25,14 @@ class JwtService {
         resolve(decoded);
       });
     });
+  }
+
+  signRefreshToken() {
+    const token = crypto.randomUUID();
+    return crypto
+      .createHmac("sha256", jwtEnv.REFRESH_TOKEN_SECRET)
+      .update(token)
+      .digest("hex");
   }
 
   decode(token, options) {

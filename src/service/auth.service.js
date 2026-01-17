@@ -1,27 +1,11 @@
+const { jwtEnv } = require("../config/jwt");
 const ApiError = require("../errors/apiError");
 const authModel = require("../models/auth.model");
 const jwtService = require("./jwt.service");
 const bcrypt = require("bcrypt");
 
 class AuthService {
-  validateEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-
-  validatePassword(password) {
-    return password && password.length >= 6;
-  }
-
   async login({ email, password }) {
-    if (!email || !password) {
-      throw new ApiError(400, "Sai tài khoản hoặc mật khẩu");
-    }
-
-    if (!this.validateEmail(email)) {
-      throw new ApiError(400, "Email không hợp lệ");
-    }
-
     const user = await authModel.findByEmailWithPassword(email);
     if (!user) {
       throw new ApiError(401, "Sai tài khoản hoặc mật khẩu");
@@ -32,29 +16,24 @@ class AuthService {
       throw new ApiError(401, "Sai tài khoản hoặc mật khẩu");
     }
 
-    const token = await jwtService.sign({ sub: user.id }, { expiresIn: "7d" });
-
     const safeUser = { id: user.id, email: user.email };
-
+    const [access_token, refresh_token] = await Promise.all([
+      jwtService.sign(
+        { sub: user.id },
+        { expiresIn: jwtEnv.ACCESS_TOKEN_TIME },
+      ),
+      jwtService.signRefreshToken(),
+    ]);
     return {
       user: safeUser,
-      token,
+      token: {
+        access_token,
+        refresh_token,
+      },
     };
   }
 
   async register({ email, password }) {
-    if (!email || !password) {
-      throw new ApiError(400, "Email và mật khẩu là bắt buộc");
-    }
-
-    if (!this.validateEmail(email)) {
-      throw new ApiError(400, "Email không hợp lệ");
-    }
-
-    if (!this.validatePassword(password)) {
-      throw new ApiError(400, "Mật khẩu phải có ít nhất 6 ký tự");
-    }
-
     const existed = await authModel.findByEmailWithPassword(email);
     if (existed) {
       throw new ApiError(409, "Email đã tồn tại");
@@ -68,11 +47,21 @@ class AuthService {
 
     const user = await authModel.findById(userId);
 
-    const token = await jwtService.sign({ sub: user.id }, { expiresIn: "7d" });
+    const safeUser = { id: user.id, email: user.email };
+    const [access_token, refresh_token] = await Promise.all([
+      jwtService.sign(
+        { sub: user.id },
+        { expiresIn: jwtEnv.ACCESS_TOKEN_TIME },
+      ),
+      jwtService.signRefreshToken(),
+    ]);
 
     return {
-      user: { id: user.id, email: user.email },
-      token,
+      user: safeUser,
+      token: {
+        access_token,
+        refresh_token,
+      },
     };
   }
 }
