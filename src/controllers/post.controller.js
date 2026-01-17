@@ -1,4 +1,4 @@
-const postsService = require("../service/posts.service");
+const postsService = require("../services/posts.service");
 
 class PostController {
   async getPostsByUser(req, res) {

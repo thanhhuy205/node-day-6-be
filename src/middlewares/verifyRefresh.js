@@ -1,6 +1,6 @@
 const ApiError = require("../errors/apiError");
 const revokedTokenModel = require("../models/revokedToken.model");
-const { hashRefreshToken } = require("../service/jwt.service");
+const { hashRefreshToken } = require("../services/jwt.service");
 
 const verifyRefresh = async (req, res, next) => {
   try {

@@ -1,6 +1,6 @@
 const { jwtEnv } = require("../config/jwt");
 const ApiError = require("../errors/apiError");
-const authModel = require("../models/auth.model");
+const authModel = require("../models/user.model");
 const revokedTokenModel = require("../models/revokedToken.model");
 const jwtService = require("./jwt.service");
 const bcrypt = require("bcrypt");
