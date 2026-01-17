@@ -40,17 +40,10 @@
               }
             },
             "url": {
-              "raw": "http://localhost:3000/api/auth/register",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "auth",
-                "register"
-              ]
+              "raw": "https://node-day-6-be.onrender.com/api/auth/register",
+              "protocol": "https",
+              "host": ["node-day-6-be", "onrender", "com"],
+              "path": ["api", "auth", "register"]
             },
             "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
           },
@@ -87,18 +80,10 @@
               }
             },
             "url": {
-              "raw": "https://node-day-5-be.onrender.com/api/auth/login",
+              "raw": "https://node-day-6-be.onrender.com/api/auth/login",
               "protocol": "https",
-              "host": [
-                "node-day-5-be",
-                "onrender",
-                "com"
-              ],
-              "path": [
-                "api",
-                "auth",
-                "login"
-              ]
+              "host": ["node-day-6-be", "onrender", "com"],
+              "path": ["api", "auth", "login"]
             },
             "description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
           },
@@ -119,17 +104,10 @@
               }
             },
             "url": {
-              "raw": "http://localhost:3000/api/auth/refresh-token",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "auth",
-                "refresh-token"
-              ]
+              "raw": "https://node-day-6-be.onrender.com/api/auth/refresh-token",
+              "protocol": "https",
+              "host": ["node-day-6-be", "onrender", "com"],
+              "path": ["api", "auth", "refresh-token"]
             }
           },
           "response": []
@@ -155,17 +133,10 @@
               }
             },
             "url": {
-              "raw": "http://localhost:3000/api/auth/logout",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "auth",
-                "logout"
-              ]
+              "raw": "https://node-day-6-be.onrender.com/api/auth/logout",
+              "protocol": "https",
+              "host": ["node-day-6-be", "onrender", "com"],
+              "path": ["api", "auth", "logout"]
             }
           },
           "response": []
@@ -194,17 +165,10 @@
               "raw": "{\r\n    \"refresh_token\": \"b1aba1d8a783dcc8cf2de4e0777626570cf2e57ff4050ad30f326858514297ca\"\r\n}"
             },
             "url": {
-              "raw": "http://localhost:3000/api/posts/me",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "posts",
-                "me"
-              ],
+              "raw": "https://node-day-6-be.onrender.com/api/posts/me",
+              "protocol": "https",
+              "host": ["node-day-6-be", "onrender", "com"],
+              "path": ["api", "posts", "me"],
               "query": [
                 {
                   "key": "",
@@ -223,17 +187,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:3000/api/posts/",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "posts",
-                ""
-              ]
+              "raw": "https://node-day-6-be.onrender.com/api/posts/",
+              "protocol": "https",
+              "host": ["node-day-6-be", "onrender", "com"],
+              "path": ["api", "posts", ""]
             }
           },
           "response": []
@@ -259,17 +216,10 @@
               }
             },
             "url": {
-              "raw": "http://localhost:3000/api/posts/",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "posts",
-                ""
-              ]
+              "raw": "https://node-day-6-be.onrender.com/api/posts/",
+              "protocol": "https",
+              "host": ["node-day-6-be", "onrender", "com"],
+              "path": ["api", "posts", ""]
             }
           },
           "response": []
@@ -295,17 +245,10 @@
               }
             },
             "url": {
-              "raw": "http://localhost:3000/api/posts/1",
-              "protocol": "http",
-              "host": [
-                "localhost"
-              ],
-              "port": "3000",
-              "path": [
-                "api",
-                "posts",
-                "1"
-              ]
+              "raw": "https://node-day-6-be.onrender.com/api/posts/1",
+              "protocol": "https",
+              "host": ["node-day-6-be", "onrender", "com"],
+              "path": ["api", "posts", "1"]
             }
           },
           "response": []
@@ -318,18 +261,14 @@
       "listen": "prerequest",
       "script": {
         "type": "text/javascript",
-        "exec": [
-          ""
-        ]
+        "exec": [""]
       }
     },
     {
       "listen": "test",
       "script": {
         "type": "text/javascript",
-        "exec": [
-          ""
-        ]
+        "exec": [""]
       }
     }
   ],
@@ -340,7 +279,7 @@
     },
     {
       "key": "base_url",
-      "value": "https://postman-rest-api-learner.glitch.me/"
+      "value": "https://node-day-6-be.onrender.com/"
     }
   ]
 }
