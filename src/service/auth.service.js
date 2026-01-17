@@ -1,10 +1,37 @@
 const { jwtEnv } = require("../config/jwt");
 const ApiError = require("../errors/apiError");
 const authModel = require("../models/auth.model");
+const revokedTokenModel = require("../models/revokedToken.model");
 const jwtService = require("./jwt.service");
 const bcrypt = require("bcrypt");
-
+const ms = require("ms");
 class AuthService {
+  async signFlowAuth(user) {
+    const safeUser = { id: user.id, email: user.email };
+    const [access_token, refresh_token] = await Promise.all([
+      jwtService.sign(
+        { sub: user.id },
+        { expiresIn: jwtEnv.ACCESS_TOKEN_TIME },
+      ),
+      jwtService.signRefreshToken(),
+    ]);
+    await revokedTokenModel.create(
+      user.id,
+      jwtService.hashRefreshToken(refresh_token),
+      new Date(Date.now() + ms(jwtEnv.REFRESH_TOKEN_TIME)),
+    );
+    return {
+      safeUser,
+      access_token,
+      refresh_token,
+    };
+  }
+
+  async revokeHashRefreshToken(userId, refreshToken) {
+    const hashTk = jwtService.hashRefreshToken(refreshToken);
+    const result = await revokedTokenModel.revokedTokenByUser(userId, hashTk);
+    return result;
+  }
   async login({ email, password }) {
     const user = await authModel.findByEmailWithPassword(email);
     if (!user) {
@@ -15,15 +42,9 @@ class AuthService {
     if (!isMatch) {
       throw new ApiError(401, "Sai tài khoản hoặc mật khẩu");
     }
+    const { safeUser, access_token, refresh_token } =
+      await this.signFlowAuth(user);
 
-    const safeUser = { id: user.id, email: user.email };
-    const [access_token, refresh_token] = await Promise.all([
-      jwtService.sign(
-        { sub: user.id },
-        { expiresIn: jwtEnv.ACCESS_TOKEN_TIME },
-      ),
-      jwtService.signRefreshToken(),
-    ]);
     return {
       user: safeUser,
       token: {
@@ -46,15 +67,8 @@ class AuthService {
     });
 
     const user = await authModel.findById(userId);
-
-    const safeUser = { id: user.id, email: user.email };
-    const [access_token, refresh_token] = await Promise.all([
-      jwtService.sign(
-        { sub: user.id },
-        { expiresIn: jwtEnv.ACCESS_TOKEN_TIME },
-      ),
-      jwtService.signRefreshToken(),
-    ]);
+    const { safeUser, access_token, refresh_token } =
+      await this.signFlowAuth(user);
 
     return {
       user: safeUser,
@@ -62,6 +76,23 @@ class AuthService {
         access_token,
         refresh_token,
       },
+    };
+  }
+
+  async logout(userId, refreshToken) {
+    const result = this.revokeHashRefreshToken(userId, refreshToken);
+
+    return result;
+  }
+
+  async refreshToken(userId, refreshToken) {
+    const user = await authModel.findById(userId);
+    await this.revokeHashRefreshToken(userId, refreshToken);
+
+    const { access_token, refresh_token } = await this.signFlowAuth(user);
+    return {
+      access_token,
+      refresh_token,
     };
   }
 }

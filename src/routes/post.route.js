@@ -4,9 +4,9 @@ const Validator = require("../middlewares/validation");
 const authRequire = require("../middlewares/authRequire");
 
 const postRouter = express.Router();
+postRouter.get("/", postController.getAllPosts);
 
 postRouter.use(authRequire);
-postRouter.get("/", postController.getAllPosts);
 postRouter.get("/me", postController.getPostsByUser);
 postRouter.post("/", Validator("post"), postController.createPost);
 postRouter.put("/:id", Validator("post"), postController.updatePost);

@@ -23,7 +23,19 @@ class AuthController {
       },
     );
   }
-  async logoutController(req, res) {}
+  async logoutController(req, res) {
+    const userId = req.user.id;
+    const refreshToken = req.body.refresh_token;
+
+    await authService.logout(userId, refreshToken);
+    return res.success(null, { message: "Đăng xuất thành công" });
+  }
+  async refreshTokenController(req, res) {
+    const userId = req.user.id;
+    const refreshToken = req.body.refresh_token;
+    const result = await authService.refreshToken(userId, refreshToken);
+    return res.success({ result });
+  }
 }
 const authController = new AuthController();
 module.exports = authController;

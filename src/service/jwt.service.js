@@ -35,6 +35,13 @@ class JwtService {
       .digest("hex");
   }
 
+  hashRefreshToken(token) {
+    return crypto
+      .createHmac("sha256", jwtEnv.REFRESH_TOKEN_SECRET)
+      .update(token)
+      .digest("hex");
+  }
+
   decode(token, options) {
     return jwt.decode(token, options || {});
   }
