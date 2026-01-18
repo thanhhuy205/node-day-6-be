@@ -46,7 +46,7 @@ class AuthService {
     }
     const { safeUser, access_token, refresh_token } =
       await this.signFlowAuth(user);
-
+    await revokeAccessTokenModel.create(user.id, access_token, null);
     return {
       user: safeUser,
       token: {
@@ -71,6 +71,7 @@ class AuthService {
     const user = await authModel.findById(userId);
     const { safeUser, access_token, refresh_token } =
       await this.signFlowAuth(user);
+    await revokeAccessTokenModel.create(user.id, access_token, null);
 
     return {
       user: safeUser,
@@ -85,7 +86,7 @@ class AuthService {
     const operations = [this.revokeHashRefreshToken(userId, refreshToken)];
     if (accessToken) {
       operations.push(
-        revokeAccessTokenModel.create(userId, accessToken, new Date()),
+        revokeAccessTokenModel.revokedTokenByUser(userId, accessToken),
       );
     }
     const [result] = await Promise.all(operations);
