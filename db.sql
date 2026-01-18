@@ -19,6 +19,17 @@ create table revoked_tokens (
     ON DELETE CASCADE
 )
 
+create table revoked_access_tokens (
+	id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    access_token VARCHAR(200) NOT NULL UNIQUE,
+    revoke_at timestamp default null , 
+	user_id BIGINT UNSIGNED,
+    
+    CONSTRAINT fk_user_access_token FOREIGN KEY
+    (user_id) REFERENCES users(id) 
+    ON DELETE CASCADE
+)
+
 create table posts (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(200) NOT NULL, 

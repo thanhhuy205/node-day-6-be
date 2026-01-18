@@ -1,10 +1,12 @@
 const { jwtEnv } = require("../config/jwt");
 const ApiError = require("../errors/apiError");
 const authModel = require("../models/user.model");
+const refreshAccessTokenModel = require("../models/refreshAccessToken.model");
 const revokedTokenModel = require("../models/revokedToken.model");
 const jwtService = require("./jwt.service");
 const bcrypt = require("bcrypt");
 const ms = require("ms");
+const revokeAccessTokenModel = require("../models/refreshAccessToken.model");
 class AuthService {
   async signFlowAuth(user) {
     const safeUser = { id: user.id, email: user.email };
@@ -79,9 +81,14 @@ class AuthService {
     };
   }
 
-  async logout(userId, refreshToken) {
-    const result = this.revokeHashRefreshToken(userId, refreshToken);
-
+  async logout(userId, refreshToken, accessToken) {
+    const operations = [this.revokeHashRefreshToken(userId, refreshToken)];
+    if (accessToken) {
+      operations.push(
+        revokeAccessTokenModel.create(userId, accessToken, new Date()),
+      );
+    }
+    const [result] = await Promise.all(operations);
     return result;
   }
 
