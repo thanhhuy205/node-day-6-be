@@ -1,7 +1,6 @@
 const { jwtEnv } = require("../config/jwt");
 const ApiError = require("../errors/apiError");
 const authModel = require("../models/user.model");
-const refreshAccessTokenModel = require("../models/refreshAccessToken.model");
 const revokedTokenModel = require("../models/revokedToken.model");
 const jwtService = require("./jwt.service");
 const bcrypt = require("bcrypt");
@@ -22,6 +21,7 @@ class AuthService {
       jwtService.hashRefreshToken(refresh_token),
       new Date(Date.now() + ms(jwtEnv.REFRESH_TOKEN_TIME)),
     );
+    await revokeAccessTokenModel.create(user.id, access_token, null);
     return {
       safeUser,
       access_token,
@@ -46,7 +46,6 @@ class AuthService {
     }
     const { safeUser, access_token, refresh_token } =
       await this.signFlowAuth(user);
-    await revokeAccessTokenModel.create(user.id, access_token, null);
     return {
       user: safeUser,
       token: {
@@ -71,7 +70,6 @@ class AuthService {
     const user = await authModel.findById(userId);
     const { safeUser, access_token, refresh_token } =
       await this.signFlowAuth(user);
-    await revokeAccessTokenModel.create(user.id, access_token, null);
 
     return {
       user: safeUser,
@@ -95,6 +93,7 @@ class AuthService {
 
   async refreshToken(userId, refreshToken) {
     const user = await authModel.findById(userId);
+    await revokeAccessTokenModel.revokedTokenAllByUser(user.id);
     await this.revokeHashRefreshToken(userId, refreshToken);
 
     const { access_token, refresh_token } = await this.signFlowAuth(user);

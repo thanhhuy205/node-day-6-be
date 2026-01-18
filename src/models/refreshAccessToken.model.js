@@ -74,6 +74,22 @@ class RevokeAccessTokenModel {
     }
   }
 
+  async revokedTokenAllByUser(userId) {
+    try {
+      const [rows] = await pool.query(
+        `
+        UPDATE revoked_access_tokens
+        SET revoke_at = NOW()
+        WHERE  user_id = ?
+        `,
+        [userId],
+      );
+      return rows.length > 0;
+    } catch (error) {
+      throw new ApiError(500, String(error));
+    }
+  }
+
   async findByUserId(userId) {
     try {
       const [rows] = await pool.query(
